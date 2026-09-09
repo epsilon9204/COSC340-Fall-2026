@@ -1,0 +1,117 @@
+Code Review Issues
+==================
+
+main.c
+------
+line 10: comment uses "//" style while the rest of the file uses "/* */";
+  comment styles should be consistent within a file. Fix: use /* */.
+line 11: "static void usage() {" - return type should be on the line before
+  the function name, and the opening brace should be on its own line.
+line 11: function name "usage" should start with a capital letter, e.g.
+  "Usage" (regular functions use mixed case starting with a capital).
+line 15 and following: multi-line comment before main() does not follow the
+  required format ("/*" and "*/" should each be on their own line, with
+  each interior line starting with " * "). Fix: reformat the comment block.
+line 16: spelling error, "formate" should be "format".
+line 18: "main (int argc, char **argv)" - no space should appear between the
+  function name and the opening parenthesis.
+line 33 and following: body of the "if (argc != 4)" block is indented 3
+  spaces instead of a proper 4-space multiple (8 spaces at this nesting
+  level).
+line 34: "exit(0);" is used in an error path (wrong number of arguments);
+  exit codes should be non-zero for errors. Fix: use exit(1).
+line 51 and following: "case" labels and their statement bodies in the
+  switch statement are indented incorrectly (case should be indented 4
+  spaces from switch, and statements 4 more spaces than that).
+line 64 and following: opening brace of the "for" loop is placed on its own
+  line; it should be on the same line as the "for".
+line 68 and following: opening brace of "if (c == EOF)" is placed on its
+  own line; it should be on the same line as the "if".
+line 70: "buffer[i] = 0;" should use '\0' rather than the integer literal 0
+  for a null character.
+line 76 and following: same case-label/indentation problem as line 51.
+line 76 and following: the base64 "switch (direction)" statement has no
+  default case; one should be added (direction is not an enumerated type).
+line 88: comment "/* Exit 0 on success */" is an unnecessary/obvious
+  comment (this exact wording is called out as a bad example in the style
+  guide). Fix: remove the comment.
+
+main.h
+------
+(file) missing #include <stdio.h>; FILE is used in the prototypes here but
+  is not declared, causing a compile error when this header is included
+  before <stdio.h> (as happens in Base64.c). Fix: add the include.
+(file) no #define include guard. Fix: add
+  #ifndef CODE_REVIEW_MAIN_H_ / #define CODE_REVIEW_MAIN_H_ / ... / #endif.
+line 2 and 3: function names "base64_encode"/"base64_decode" should be
+  capitalized per the function naming convention, e.g. "Base64Encode" /
+  "Base64Decode".
+line 2 and 3: prototypes should not include parameter names ("data",
+  "size", "str").
+line 6: function name "encode" should be capitalized ("Encode"); remove the
+  space before "("; prototype should not include the parameter name "fp".
+line 9: function name "decode" should be capitalized ("Decode"); remove the
+  space before "("; prototype should not include the parameter names
+  "filename"/"fpin".
+
+Base64.c (renamed to base64.c, see below)
+------------------------------------------
+(filename) "Base64.c" is not all lowercase. Fix: rename to "base64.c" (and
+  update the Makefile accordingly).
+(file) all indentation should be changed from 2 spaces to 4 spaces.
+line 39: line is 96 characters long, over the 80-character maximum. Fix:
+  wrap the line.
+line 43: "pos(char c) {" - opening brace should be on its own line;
+  function name should be capitalized ("Pos") since it is a regular
+  function.
+line 54 and following: multi-line comment does not follow the required
+  format (text begins on the same line as the opening "/*" instead of the
+  following line).
+line 54: spelling error, "chunck" should be "chunk".
+line 58: function name "base64_encode" should be capitalized
+  ("Base64Encode").
+line 95: "*p = 0;" should use '\0' rather than the integer literal 0.
+line 105: parameter name "TokenString" is mixed case; should be lowercase
+  with underscores, e.g. "token_string".
+line 105: function name "token_decode" should be capitalized
+  ("TokenDecode").
+line 130: spelling error, "Decoode" should be "Decode"; comment wording is
+  also awkward/ungrammatical and should be reworded.
+line 133: function name "base64_decode" should be capitalized
+  ("Base64Decode").
+line 143: "unsigned val" should be "unsigned int val" (use "unsigned int"
+  rather than bare "unsigned").
+line 144: "unsigned marker" should be "unsigned int marker", same reason.
+
+uu.c
+----
+line 52: "encode (FILE *fp)" - remove the space before "("; function name
+  should be capitalized ("Encode").
+line 54: "register int ch, n;" - use of "register" is discouraged in new
+  code. Fix: remove the keyword.
+line 55: "register char *p;" - same as line 54, remove "register".
+line 58 and following: opening brace of the "while" loop is placed on its
+  own line at the wrong indentation; should be on the same line as
+  "while".
+line 64 and following: body of the inner "for" loop is not indented one
+  level deeper than the loop (brace on its own line, statements only
+  indented the same as the loop itself instead of 4 more spaces). Fix:
+  reindent the whole block and put the brace on the same line as "for".
+line 110: "decode (char *filename, FILE *fpin)" - remove the space before
+  "("; function name should be capitalized ("Decode").
+line 132: "if ( buf[0] != '~' ) {" - extra spaces just inside the
+  parentheses. Fix: "if (buf[0] != '~') {".
+line 178 and following: "if (n <= 0) break;" is missing braces around the
+  if body (braces are required for the controlled statement of an if), and
+  the indentation of "break;" is incorrect as a result.
+line 189: "else {" appears on its own line; it should appear on the same
+  line as the preceding closing brace: "} else {".
+line 207: "return (0);" has unnecessary parentheses around the return
+  expression (this exact pattern is called out as a bad example in the
+  style guide). Fix: "return 0;".
+
+Makefile
+--------
+(file) references to Base64.c/Base64.o need to be updated to base64.c/
+  base64.o after the source file rename (Makefile itself does not need to
+  follow the style guide, per assignment instructions).
